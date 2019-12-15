@@ -1,0 +1,77 @@
+if($_SERVER['REQUEST_METHOD'] === "POST" && empty($_POST)){
+    $_POST = json_decode(file_get_contents('http://php://input'));
+    
+    $user_id = $_POST['user_id'];
+    $email = $_POST['email'];
+    $mobile = $_POST['mobile'];
+    $firstname = $_POST['firstname'];
+    $lastname = $_POST['lastname'];
+    $total_payable = $_POST['total_payable'];
+    
+     $orders_query = "INSERT INTO store_orders (user_fullname) VALUES ('$user_id')";
+     $orders_result = mysqli_query($connection, $orders_query); 
+}
+
+
+
+
+<!--<form action="" method="POST">
+                <input  type="hidden" name="user_fullname" value="<?php// echo $user_lastname; ?>, <?php// echo $user_firstname; ?>">
+                <input  type="hidden" name="user_mobile" value="<?php// echo $user_mobile; ?>">
+                <input  type="hidden" name="total_payable" value="<?php //echo $grandtotal; ?>">
+                <input  type="hidden" name="product_name" value="<?php// echo implode(', ', $maincart_product_names) ?>"> -->
+                
+                
+                
+                                if(isset($_POST['check_out'])) {
+
+                $user_fullname = mysqli_real_escape_string($connection, $_POST['user_fullname']);
+                $user_mobile = mysqli_real_escape_string($connection, $_POST['user_mobile']);
+                $total_payable = mysqli_real_escape_string($connection, $_POST['total_payable']);
+                $product_name = mysqli_real_escape_string($connection, $_POST['product_name']);
+                $city = mysqli_real_escape_string($connection, $_POST['city']);
+                $postcode = mysqli_real_escape_string($connection, $_POST['postcode']);
+                $address = mysqli_real_escape_string($connection, $_POST['address']);
+                $state = mysqli_real_escape_string($connection, $_POST['state']);
+
+                    $orders_query = "INSERT INTO store_orders (user_fullname, postal_code, city, state, address, user_mobile, product_name, total_payable, payment_status, payment_at, delivery_status) VALUES ('$user_fullname', '$postcode', '$city', '$state', '$address', '$user_mobile', '$product_name', '$total_payable', 'pending', 'null', 'pending')";
+                     if(mysqli_query($connection, $orders_query)){   
+                
+                     }else{
+                        print '<script type="text/javascript">alert("Item failed to add to cart");</script>';
+                     }
+
+                }
+                
+                
+                
+                 $.ajax({
+                                     url: "update.php", // this is an endpoint that sends the hashed values and transaction reference to the client.
+                                      headers: { contentType: "application/json" },
+                                      dataType: "json",
+                                      type: "POST",
+                                      cache: false,
+                                      success: function(response) {
+                                        console.log(response);
+                                        txRef = response.txref;
+                                        email = response.customer_email;
+                                       },
+                                       error: function(err) {
+                                         console.log(err);
+                                       }
+                                });
+                                
+                                
+                                
+                                
+                                
+axios.post('cart.php').then((res)=>{
+    console.log(res);
+    window.location = "cart.php";
+}).catch((error) =>{
+    console.log(error.data);
+ swal("Error!", "Payment update was not successful, please contact support", "error")
+ .then((value) => {
+ window.location = "index.php";
+ });
+});
